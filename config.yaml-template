@@ -1,0 +1,7 @@
+aws:
+  credential:
+    client_key: xxxx
+    secret_key: yyyy
+    region: wwww
+  s3:
+    bucket: yout-aws-bucket
