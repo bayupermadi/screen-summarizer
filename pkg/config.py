@@ -7,6 +7,7 @@ def getConfig(config_file):
         config = yaml.safe_load(stream)
 
     s3_bucket = config['aws']['s3']['bucket']
+    openai_key = config['openai']['api_key']
 
     # Set the OS Enviroment
     os.environ['AWS_ACCESS_KEY_ID'] = config['aws']['credential']['access_key']
@@ -14,7 +15,8 @@ def getConfig(config_file):
     os.environ['AWS_DEFAULT_REGION'] = config['aws']['credential']['region']
 
     conf = {
-        "s3_bucket": s3_bucket
+        "s3_bucket": s3_bucket,
+        "openai_key": openai_key
     }
 
     return conf

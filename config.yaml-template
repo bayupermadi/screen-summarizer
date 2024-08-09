@@ -5,3 +5,5 @@ aws:
     region: wwww
   s3:
     bucket: yout-aws-bucket
+openai:
+  api_key: zzzz

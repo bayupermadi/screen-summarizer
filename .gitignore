@@ -6,3 +6,6 @@ config.yaml
 *.mp3
 *.mp4
 *.mkv
+*.docx
+*.json
+*.txt
