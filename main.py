@@ -1,4 +1,4 @@
-from pkg import chatgpt, videotoaudio, awstranscribe, config as cf, awss3, chatgpt
+from pkg import chatgpt, videotoaudio, awstranscribe, config as cf, awss3, chatgpt, speechtotext
 import argparse
 import os
 
@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(description="Specify the video sources")
 # Add arguments
 parser.add_argument("--video", help="Sources of screen record to summary")
 parser.add_argument("--config", help = "Target config file")
+parser.add_argument("--language", help = "Languange (id-ID, en-EN)")
 
 # Parse the arguments
 args = parser.parse_args()
@@ -18,26 +19,28 @@ config = cf.getConfig(args.config)
 def main():
     ## convert video to audio
     audio_file = videotoaudio.convert_video_to_mp3(args.video)
+    # audio_file = 'fc61d02f-3347-4421-a897-be0b03f63da1.mp3'
 
     ## push audio to S3
-    if audio_file:
-        if awss3.upload(audio_file, config['s3_bucket']):
-            file_uri = "s3://{}/{}".format(config['s3_bucket'],audio_file)
+    # if audio_file:
+    #     if awss3.upload(audio_file, config['s3_bucket']):
+    #         file_uri = "s3://{}/{}".format(config['s3_bucket'],audio_file)
 
     ## transcribe audio 
-    url_tr_file = awstranscribe.transcribe_file(file_uri)
-    do_tr_file = awstranscribe.download_tr_file(url_tr_file)
+    # url_tr_file = awstranscribe.transcribe_file(file_uri)
+    # do_tr_file = awstranscribe.download_tr_file(url_tr_file)
+    speech_to_text = speechtotext.transcribe(audio_file, args.language)
 
-    # summary the trascribe to meeting minute
-    summ_prepare = chatgpt.prepare(do_tr_file)
-    summ_content = chatgpt.generate_meeting_minute(summ_prepare, config['openai_key'])
-    chatgpt.save_to_docx(summ_content)
+    # # summary the trascribe to meeting minute
+    # summ_prepare = chatgpt.prepare(do_tr_file)
+    # summ_content = chatgpt.generate_meeting_minute(summ_prepare, config['openai_key'])
+    # chatgpt.save_to_docx(summ_content)
 
     ## clean the temporary file
-    awss3.delete_file(audio_file, config['s3_bucket'])
-    os.remove(audio_file)
-    os.remove(do_tr_file)
-    os.remove(summ_prepare)
+    # awss3.delete_file(audio_file, config['s3_bucket'])
+    # os.remove(audio_file)
+    # os.remove(do_tr_file)
+    # os.remove(summ_prepare)
 
 if __name__ == "__main__":
     main()
